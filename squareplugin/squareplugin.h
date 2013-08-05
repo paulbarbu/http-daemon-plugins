@@ -16,7 +16,7 @@ class SQUAREPLUGINSHARED_EXPORT SquarePlugin :
     Q_INTERFACES(IPlugin)
 public:
     SquarePlugin(QObject *parent=0);
-        HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData);
+        HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData) const;
 };
 
 #endif // SQUAREPLUGIN_H

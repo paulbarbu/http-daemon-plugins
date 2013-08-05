@@ -5,7 +5,7 @@ LoginPlugin::LoginPlugin(QObject *parent) : QObject(parent)
 {
 }
 
-HTTPRequestHandler *LoginPlugin::getHTTPRequestHandler(const HTTPRequest &requestData)
+HTTPRequestHandler *LoginPlugin::getHTTPRequestHandler(const HTTPRequest &requestData) const
 {
     return new LoginHTTPRequestHandler(requestData);
 }

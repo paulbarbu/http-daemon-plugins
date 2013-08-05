@@ -5,7 +5,7 @@ SquarePlugin::SquarePlugin(QObject *parent) : QObject(parent)
 {
 }
 
-HTTPRequestHandler *SquarePlugin::getHTTPRequestHandler(const HTTPRequest &requestData)
+HTTPRequestHandler *SquarePlugin::getHTTPRequestHandler(const HTTPRequest &requestData) const
 {
     return new SquareHTTPRequestHandler(requestData);
 }
