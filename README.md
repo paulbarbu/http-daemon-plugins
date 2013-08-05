@@ -6,8 +6,17 @@ Plugins should be linked to the http-daemon-components library and should
 respect [these regulations](https://qt-project.org/doc/qt-4.8/plugins-howto.html#the-lower-level-api-extending-qt-applications)
 in order to be loadable by the daemon.
 
-After compilation, they should be copied in the directory set via the command
-line argument given to the http-daemon when started (`--pluginroot`).
+In order to do this the paths in the project file must be changed to point to
+the header files of the http-daemon-components and to the library provided by
+the same project.
+
+The qmake variables that need to be changed are: `LIBS`, `INCLUDEPATH`,
+`DEPENDPATH`, `PRE_TARGETDEPS`.
+
+After compilation, the plugins (in the form of dynamic libraries) should be
+copied in the directory set via the command line argument given to the
+http-daemon when started (`--pluginroot`) so that the daemon can find and load
+them.
 
 License
 =======
