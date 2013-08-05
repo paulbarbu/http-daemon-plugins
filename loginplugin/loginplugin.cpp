@@ -1,7 +1,7 @@
 #include "loginplugin.h"
 #include "loginhttprequesthandler.h"
 
-LoginPlugin::LoginPlugin()
+LoginPlugin::LoginPlugin(QObject *parent) : QObject(parent)
 {
 }
 

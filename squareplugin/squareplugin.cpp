@@ -1,7 +1,7 @@
 #include "squareplugin.h"
 #include "squarehttprequesthandler.h"
 
-SquarePlugin::SquarePlugin()
+SquarePlugin::SquarePlugin(QObject *parent) : QObject(parent)
 {
 }
 

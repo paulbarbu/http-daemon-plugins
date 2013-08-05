@@ -14,7 +14,7 @@ class LOGINPLUGINSHARED_EXPORT LoginPlugin :
     Q_OBJECT
     Q_INTERFACES(IPlugin)
 public:
-    LoginPlugin();
+    LoginPlugin(QObject *parent=0);
     HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData);
 };
 
