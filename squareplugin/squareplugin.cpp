@@ -10,4 +10,6 @@ HTTPRequestHandler *SquarePlugin::getHTTPRequestHandler(const HTTPRequest &reque
     return new SquareHTTPRequestHandler(requestData);
 }
 
-Q_EXPORT_PLUGIN2(squareplugin, SquarePlugin)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    Q_EXPORT_PLUGIN2(squareplugin, SquarePlugin)
+#endif

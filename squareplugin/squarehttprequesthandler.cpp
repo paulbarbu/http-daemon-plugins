@@ -1,3 +1,8 @@
+#include <QUrl>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    #include <QUrlQuery>
+#endif
+
 #include "squarehttprequesthandler.h"
 
 SquareHTTPRequestHandler::SquareHTTPRequestHandler(const HTTPRequest &r) :
@@ -8,7 +13,13 @@ SquareHTTPRequestHandler::SquareHTTPRequestHandler(const HTTPRequest &r) :
 void SquareHTTPRequestHandler::createResponse()
 {
     HTTPResponse response;
-    if("GET" != requestData.method || !requestData.url.hasQueryItem("a")){
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        QUrlQuery url_query(requestData.url);
+    #else
+        QUrl url_query = requestData.url;
+    #endif
+
+    if("GET" != requestData.method || !url_query.hasQueryItem("a")){
         response.setStatusCode(400);
         response.setReasonPhrase("Bad Request");
         response.setBody("Try again with valid data!\n");
@@ -18,7 +29,7 @@ void SquareHTTPRequestHandler::createResponse()
         return;
     }
 
-    QString numToSquare = requestData.url.queryItemValue("a");
+    QString numToSquare = url_query.queryItemValue("a");
 
     response.setStatusCode(200);
     response.setReasonPhrase("OK");
@@ -27,7 +38,7 @@ void SquareHTTPRequestHandler::createResponse()
     double n = numToSquare.toDouble(&ok);
 
     if(!ok){
-        response.setBody("a-ul trebuie sa fie numar!\n");
+        response.setBody("a must be a number!\n");
     }
     else{
         response.setBody(numToSquare + "^2 = " + QString::number(n*n) + "\n");

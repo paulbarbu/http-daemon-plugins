@@ -10,4 +10,6 @@ HTTPRequestHandler *LoginPlugin::getHTTPRequestHandler(const HTTPRequest &reques
     return new LoginHTTPRequestHandler(requestData);
 }
 
-Q_EXPORT_PLUGIN2(loginplugin, LoginPlugin)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    Q_EXPORT_PLUGIN2(loginplugin, LoginPlugin)
+#endif
