@@ -20,8 +20,9 @@ void LoginHTTPRequestHandler::createResponse()
         response.setStatusCode(200);
         response.setReasonPhrase("OK");
 
+        //TODO: maybe use a QNetworkCookie here
         if(requestData.fields.contains("Cookie") &&
-                "loggedin=1" == requestData.fields["Cookie"][0]){
+                "loggedin=1" == requestData.fields["Cookie"].toString()){
             response.setBody("You're logged in!");
         }
         else{

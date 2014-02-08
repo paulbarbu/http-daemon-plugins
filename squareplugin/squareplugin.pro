@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       -= gui
+QT += network
 
 TARGET = squareplugin
 TEMPLATE = lib
@@ -12,19 +13,19 @@ TEMPLATE = lib
 DEFINES += SQUAREPLUGIN_LIBRARY
 
 SOURCES += squareplugin.cpp \
-    squarehttprequesthandler.cpp
+	squarehttprequesthandler.cpp
 
 HEADERS += squareplugin.h\
-        squareplugin_global.h \
-    squarehttprequesthandler.h
+		squareplugin_global.h \
+	squarehttprequesthandler.h
 
 unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
+	maemo5 {
+		target.path = /opt/usr/lib
+	} else {
+		target.path = /usr/lib
+	}
+	INSTALLS += target
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-http-daemon-components-Desktop-Debug/release/ -lhttp-daemon-components
