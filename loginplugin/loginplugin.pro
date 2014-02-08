@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       -= gui
-QT += network
+QT += network concurrent
 
 TARGET = loginplugin
 TEMPLATE = lib
@@ -19,6 +19,9 @@ HEADERS += loginplugin.h\
 	loginplugin_global.h \
 	loginhttprequesthandler.h
 
+CONFIG += c++11
+
+LIBS += -lQt5Concurrent
 
 #TODO: remove this since those platforms are not targeted
 unix:!symbian {

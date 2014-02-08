@@ -1,3 +1,5 @@
+#include <QtConcurrent/QtConcurrentFilter>
+
 #include "loginhttprequesthandler.h"
 
 LoginHTTPRequestHandler::LoginHTTPRequestHandler(const HTTPRequest &requestData) :
@@ -20,9 +22,13 @@ void LoginHTTPRequestHandler::createResponse()
         response.setStatusCode(200);
         response.setReasonPhrase("OK");
 
-        //TODO: maybe use a QNetworkCookie here
-        if(requestData.fields.contains("Cookie") &&
-                "loggedin=1" == requestData.fields["Cookie"].toString()){
+        QList<QNetworkCookie> cookieList = QtConcurrent::blockingFiltered(requestData.cookieJar,
+            [] (const QNetworkCookie &cookie) -> bool {
+                return cookie.name() == "loggedin" &&  cookie.value() == "1";
+            }
+        );
+
+        if(1 == cookieList.size()){
             response.setBody("You're logged in!");
         }
         else{
@@ -43,7 +49,7 @@ void LoginHTTPRequestHandler::createResponse()
             response.setStatusCode(200);
             response.setReasonPhrase("OK");
 
-            //this could be somethign randomized in order to avoid replicating
+            //this could be something randomized in order to avoid replicating
             response.setHeaderField("Set-Cookie", "loggedin=1");
             response.setBody("You're logged in!\n");
 

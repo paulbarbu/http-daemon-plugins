@@ -19,6 +19,8 @@ HEADERS += squareplugin.h\
 		squareplugin_global.h \
 	squarehttprequesthandler.h
 
+CONFIG += c++11
+
 unix:!symbian {
 	maemo5 {
 		target.path = /opt/usr/lib
