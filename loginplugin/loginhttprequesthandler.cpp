@@ -1,4 +1,10 @@
-#include <QtConcurrent/QtConcurrentFilter>
+#include <QtGlobal>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0 ,0)
+    #include <QtConcurrent/QtConcurrentFilter>
+#else
+    #include <QtConcurrentFilter>
+#endif
 
 #include "loginhttprequesthandler.h"
 

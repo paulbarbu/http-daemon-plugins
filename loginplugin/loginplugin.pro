@@ -19,9 +19,7 @@ HEADERS += loginplugin.h\
 	loginplugin_global.h \
 	loginhttprequesthandler.h
 
-CONFIG += c++11
-
-LIBS += -lQt5Concurrent
+QMAKE_CXXFLAGS += -std=c++11
 
 #TODO: remove this since those platforms are not targeted
 unix:!symbian {

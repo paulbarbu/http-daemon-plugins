@@ -19,7 +19,7 @@ HEADERS += squareplugin.h\
 		squareplugin_global.h \
 	squarehttprequesthandler.h
 
-CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
 
 unix:!symbian {
 	maemo5 {
