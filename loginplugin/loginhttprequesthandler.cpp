@@ -56,7 +56,10 @@ void LoginHTTPRequestHandler::createResponse()
             response.setReasonPhrase("OK");
 
             //this could be something randomized in order to avoid replicating
-            response.setHeaderField("Set-Cookie", "loggedin=1");
+            QNetworkCookie cookie("loggedin", "1");
+            cookie.setHttpOnly(true);
+            response.setCookie(cookie);
+
             response.setBody("You're logged in!\n");
 
             emit responseWritten(response);
