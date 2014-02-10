@@ -5,8 +5,11 @@ LoginPlugin::LoginPlugin(QObject *parent) : QObject(parent)
 {
 }
 
-HTTPRequestHandler *LoginPlugin::getHTTPRequestHandler(const HTTPRequest &requestData) const
+HTTPRequestHandler *LoginPlugin::getHTTPRequestHandler(const HTTPRequest &requestData,
+                                                       const QHash<QString, QVariant> &s) const
 {
+    Q_UNUSED(s);
+
     return new LoginHTTPRequestHandler(requestData);
 }
 
