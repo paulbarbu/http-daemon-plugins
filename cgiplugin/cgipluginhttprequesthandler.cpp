@@ -3,6 +3,7 @@
 #include <QFileInfo>
 
 #include "cgipluginhttprequesthandler.h"
+#include "cgiresponseparser.h"
 
 CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const HTTPRequest &requestData,
                                                          const QHash<QString, QVariant> &s) :
@@ -88,13 +89,13 @@ void CgiPluginHTTPRequestHandler::createResponse()
         qDebug() << "CONTENT_TYPE" << requestData.fields["Content-Type"].toString();
     }
 
-    //TODO: here I could implement a configurable timeout, now using the default 3000 ms
+    //TODO: use a configurable timeout, now using the default 3000 ms
     QProcess process;
 
     process.setProcessEnvironment(env);
     process.setWorkingDirectory(settings["cgi-dir"].toString());
 
-    //invoke other - configurable - things too (PERL)
+    //TODO: invoke other - configurable - things too (PERL)
     process.start("php-cgi");
 
     //TODO: do it using the SIGNAL-SLOT mechanism
@@ -113,7 +114,7 @@ void CgiPluginHTTPRequestHandler::createResponse()
 
     //TODO: refactor this!
 
-    //TODO: set stdin and test (with a form)
+    //TODO: test with a form
     if(requestData.contentLength > 0){
         QByteArray input;
         QHash<QString, QString>::const_iterator i;
@@ -146,14 +147,19 @@ void CgiPluginHTTPRequestHandler::createResponse()
     QByteArray output(process.readAllStandardOutput());
     qDebug() << "CGI output:" << output;
 
-    //TODO: proper parsing
-    response.setStatusCode(200);
-    response.setReasonPhrase("OK");
-    response.setHeaderField("Content-Type", "text/html");
+    CgiResponseParser parser(output);
+    if(!parser.parse()){
+        qDebug() << "Couldn't parse the output of the CGI script";
 
-    response.setBody(output);
+        response.setStatusCode(500);
+        response.setReasonPhrase("Internal Server Error");
 
-    // TODO: see: http://127.0.0.1:8282/cgi/inexisten_path
+        emit responseWritten(response);
+        emit endOfWriting();
+        return;
+    }
+
+    response = parser.getResponse();
 
     //TODO: check the segfault happening if not setting the response and calling these
     emit responseWritten(response);

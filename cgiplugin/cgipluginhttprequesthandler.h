@@ -2,6 +2,7 @@
 #define CGIPLUGINHTTPREQUESTHANDLER_H
 
 #include "httprequesthandler.h"
+#include "cgiresponse.h"
 
 class CgiPluginHTTPRequestHandler : public HTTPRequestHandler
 {
@@ -12,7 +13,7 @@ private:
     bool setScriptName(const QUrl &url);
 
     QString scriptName;
-    HTTPResponse response;
+    CgiResponse response;
 };
 
 #endif // CGIPLUGINHTTPREQUESTHANDLER_H
