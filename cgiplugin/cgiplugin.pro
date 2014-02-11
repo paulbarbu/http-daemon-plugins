@@ -14,11 +14,15 @@ TEMPLATE = lib
 DEFINES += CGIPLUGIN_LIBRARY
 
 SOURCES += cgiplugin.cpp \
-    cgipluginhttprequesthandler.cpp
+    cgipluginhttprequesthandler.cpp \
+    cgiresponseparser.cpp \
+    cgiresponse.cpp
 
 HEADERS += cgiplugin.h\
 		cgiplugin_global.h \
-    cgipluginhttprequesthandler.h
+    cgipluginhttprequesthandler.h \
+    cgiresponseparser.h \
+    cgiresponse.h
 
 QMAKE_CXXFLAGS += -std=c++11
 
