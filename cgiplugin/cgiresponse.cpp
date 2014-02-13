@@ -22,13 +22,11 @@ QByteArray CgiResponse::get() const
 
     QMultiHash<QByteArray, QByteArray>::const_iterator i;
     for(i = fields.constBegin(); i != fields.constEnd(); ++i){
-        //TODO: if this already has a ":" don't add it
         r += i.key() + ": " + i.value() + "\r\n";
     }
 
     QHash<QString, QString>::const_iterator j;
     for(j = cgiFields.constBegin(); j != cgiFields.constEnd(); ++j){
-        //TODO: if this already has a ":" don't add it
         r += i.key() + ": " + i.value() + "\r\n";
     }
 

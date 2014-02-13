@@ -79,7 +79,7 @@ void CgiPluginHTTPRequestHandler::createResponse()
     QString path = settings[extension].toString();
 
     if("*" == path){
-        path = settings["cgi-dir"].toString() + "/" + urlParts[1];
+        path = settings["cgi-dir"].toString() + urlParts[1];
     }
 
     qDebug() << "Starting process:" << path;
@@ -163,8 +163,8 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
     env.insert("REDIRECT_STATUS", "200");
 
     //absolute path to the script
-    env.insert("SCRIPT_FILENAME", settings["cgi-dir"].toString() + "/" + urlParts[1]);
-    qDebug() << "SCRIPT_FILENAME" << settings["cgi-dir"].toString() + "/" + urlParts[1];
+    env.insert("SCRIPT_FILENAME", settings["cgi-dir"].toString() + urlParts[1]);
+    qDebug() << "SCRIPT_FILENAME" << settings["cgi-dir"].toString() + urlParts[1];
 
     env.insert("SCRIPT_NAME", scriptName);
     qDebug() << "SCRIPT_NAME" << scriptName;
