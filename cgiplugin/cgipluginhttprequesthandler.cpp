@@ -160,8 +160,8 @@ void CgiPluginHTTPRequestHandler::setScriptName()
 
 void CgiPluginHTTPRequestHandler::setEnvironment()
 {
-    //{PHP specific
-    env.insert("REDIRECT_STATUS", "200"); //TODO: maybe change this, http://php.net/manual/en/security.cgi-bin
+    env.insert("REDIRECT_STATUS", "200");
+
     //absolute path to the script
     env.insert("SCRIPT_FILENAME", settings["cgi-dir"].toString() + "/" + urlParts[1]);
     qDebug() << "SCRIPT_FILENAME" << settings["cgi-dir"].toString() + "/" + urlParts[1];
@@ -181,10 +181,10 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
     env.insert("SERVER_PORT", QString::number(requestData.port));
     qDebug() << "SERVER_PORT" << QString::number(requestData.port);
 
-    env.insert("SERVER_NAME", requestData.host.toString()); //TODO: check it
+    env.insert("SERVER_NAME", requestData.host.toString());
     qDebug() << "SERVER_NAME" << requestData.host.toString();
 
-    env.insert("SERVER_PROTOCOL", requestData.protocol + "/" + QString::number(requestData.protocolVersion)); //TODO: check it
+    env.insert("SERVER_PROTOCOL", requestData.protocol + "/" + QString::number(requestData.protocolVersion));
     qDebug() << "SERVER_PROTOCOL:" << QString(requestData.protocol + "/" + QString::number(requestData.protocolVersion));
 
     env.insert("GATEWAY_INTERFACE", "CGI/1.1");
