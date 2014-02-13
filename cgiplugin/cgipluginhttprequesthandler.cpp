@@ -216,8 +216,9 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
         qDebug() << "CONTENT_LENGTH" << QString::number(requestData.contentLength);
     }
 
-    if(requestData.fields.contains("Content-Type")){
-        env.insert("CONTENT_TYPE", requestData.fields["Content-Type"].toString());
-        qDebug() << "CONTENT_TYPE" << requestData.fields["Content-Type"].toString();
+
+    if(!requestData.contentType.isEmpty()){
+        env.insert("CONTENT_TYPE", requestData.contentType);
+        qDebug() << "CONTENT_TYPE" << requestData.contentType;
     }
 }
