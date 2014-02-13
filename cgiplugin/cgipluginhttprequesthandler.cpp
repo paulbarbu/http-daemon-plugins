@@ -100,14 +100,21 @@ void CgiPluginHTTPRequestHandler::createResponse()
 
     if(requestData.contentLength > 0){
         QByteArray input;
-        QHash<QString, QString>::const_iterator i;
 
-        for(i=requestData.postData.constBegin(); i != requestData.postData.constEnd(); ++i){
-            input += i.key() +  "=" + i.value() + "&";
+        if(!requestData.postData.isEmpty()){
+            QHash<QString, QString>::const_iterator i;
+
+            for(i=requestData.postData.constBegin(); i != requestData.postData.constEnd(); ++i){
+                input += i.key() +  "=" + i.value() + "&";
+            }
+
+            //remove the last "&"
+            input.remove(input.length() - 1, 1);
+        }
+        else{
+            input = requestData.rawPostData;
         }
 
-        //remove the last "&"
-        input.remove(input.length() - 1, 1);
         qDebug() << "STDIN:" << input;
 
         process.write(input);
