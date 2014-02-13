@@ -98,14 +98,11 @@ void CgiPluginHTTPRequestHandler::createResponse()
         return;
     }
 
-    //TODO: test with a form
     if(requestData.contentLength > 0){
         QByteArray input;
         QHash<QString, QString>::const_iterator i;
 
-        //TODO: implement a HTTPRequest.rawPost() method
-        //TODO: test this and the HTTPParser with somethign that contains "=" and "&" as actual data
-        for(i=requestData.postData.constBegin(); i != requestData.postData.end(); ++i){
+        for(i=requestData.postData.constBegin(); i != requestData.postData.constEnd(); ++i){
             input += i.key() +  "=" + i.value() + "&";
         }
 
@@ -175,8 +172,8 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
     env.insert("PATH_INFO", requestData.url.path().replace(0, scriptName.length(), ""));
     qDebug() << "PATH_INFO" << requestData.url.path().replace(0, scriptName.length(), "");
 
-    env.insert("GATEWAY_INTERFACE", requestData.method);
-    qDebug() << "GATEWAY_INTERFACE" << requestData.method;
+    env.insert("REQUEST_METHOD", requestData.method);
+    qDebug() << "REQUEST_METHOD" << requestData.method;
 
     env.insert("REMOTE_ADDR", requestData.remoteAddress.toString());
     qDebug() << "REMOTE_ADDR" << requestData.remoteAddress.toString();
@@ -190,7 +187,7 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
     env.insert("SERVER_PROTOCOL", requestData.protocol + "/" + QString::number(requestData.protocolVersion)); //TODO: check it
     qDebug() << "SERVER_PROTOCOL:" << QString(requestData.protocol + "/" + QString::number(requestData.protocolVersion));
 
-    env.insert("REQUEST_METHOD", "CGI/1.1");
+    env.insert("GATEWAY_INTERFACE", "CGI/1.1");
 
     if(requestData.url.hasQuery()){
         #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
