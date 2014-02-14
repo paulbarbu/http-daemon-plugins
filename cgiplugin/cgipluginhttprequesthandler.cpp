@@ -31,6 +31,7 @@ void CgiPluginHTTPRequestHandler::createResponse()
         response.setStatusCode(500);
         response.setReasonPhrase("Internal Server Error");
         response.setBody("Invalid configuration");
+        qDebug() << "Cannot read cgi-dir or not a directory:" << info.absoluteFilePath();
 
         emit responseWritten(response);
         emit endOfWriting();
@@ -85,7 +86,6 @@ void CgiPluginHTTPRequestHandler::createResponse()
     qDebug() << "Starting process:" << path;
     process.start(path);
 
-    //TODO: do it using the SIGNAL-SLOT mechanism
     if(!process.waitForStarted(timeout)){
         qDebug() << "Process hasn't started, error:" << process.errorString();
         qDebug() << "Process state: " << process.state();
@@ -153,7 +153,6 @@ void CgiPluginHTTPRequestHandler::createResponse()
 
     response = parser.getResponse();
 
-    //TODO: check the segfault happening if not setting the response and calling these
     emit responseWritten(response);
     emit endOfWriting();
 }
