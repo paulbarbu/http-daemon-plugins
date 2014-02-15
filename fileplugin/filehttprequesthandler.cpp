@@ -1,13 +1,14 @@
+#include <QtGlobal>
 #include <QFileInfo>
 #include <QDir>
 #include <QFile>
+#include <QMimeDatabase>
 
 #include "filehttprequesthandler.h"
 
 FileHTTPRequestHandler::FileHTTPRequestHandler(const QHash<QString, QVariant> &s) :
     HTTPRequestHandler(s), chunk_size(512*1024)
 {
-    //TODO: set the mime type - libmagic
     unsigned int chunk_size_val;
     bool ok;
     chunk_size_val = settings["chunksize"].toUInt(&ok);
@@ -87,6 +88,15 @@ void FileHTTPRequestHandler::serveFileContents(const QString &path)
 
     response.setStatusCode(200);
     response.setReasonPhrase("OK");
+
+    #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+        QMimeDatabase db;
+        QMimeType type = db.mimeTypeForFile(path);
+        if(type.isValid()){
+            qDebug() << "Mime type:" << type.name();
+            response.setHeaderField("Content-Type", type.name());
+        }
+    #endif
 
     QByteArray content;
     content = file.read(chunk_size);
