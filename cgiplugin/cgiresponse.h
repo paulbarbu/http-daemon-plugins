@@ -13,6 +13,8 @@ public:
 
     QByteArray get() const;
     QByteArray getPartial();
+
+    void clear();
 private:
     QHash<QString, QString> cgiFields;
 };

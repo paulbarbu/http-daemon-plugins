@@ -18,6 +18,7 @@ CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const QHash<QString, QV
 
 void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
+    clear();
     urlParts = requestData.url.path().split("/", QString::SkipEmptyParts);
 
     setScriptName();
@@ -155,8 +156,17 @@ void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
     emit endOfWriting();
 }
 
+void CgiPluginHTTPRequestHandler::clear()
+{
+    response.clear();
+    scriptName.clear();
+    urlParts.clear();
+    env.clear();
+}
+
 void CgiPluginHTTPRequestHandler::setScriptName()
 {
+    qDebug() << urlParts.size();
     if(2 <= urlParts.size()){
         scriptName = "/" + urlParts[0] + "/" + urlParts[1];
     }

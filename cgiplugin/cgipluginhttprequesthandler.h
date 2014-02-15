@@ -12,6 +12,7 @@ public:
     explicit CgiPluginHTTPRequestHandler(const QHash<QString, QVariant> &s);
     void createResponse(const HTTPRequest &requestData);
 private:
+    void clear();
     void setScriptName();
     void setEnvironment(const HTTPRequest &requestData);
 

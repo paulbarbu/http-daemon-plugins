@@ -39,3 +39,9 @@ QByteArray CgiResponse::getPartial()
 {
     return get();
 }
+
+void CgiResponse::clear()
+{
+    HTTPResponse::clear();
+    cgiFields.clear();
+}
