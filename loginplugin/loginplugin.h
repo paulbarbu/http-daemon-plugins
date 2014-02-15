@@ -21,7 +21,7 @@ class LOGINPLUGINSHARED_EXPORT LoginPlugin :
     #endif
 public:
     LoginPlugin(QObject *parent=0);
-    HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData, const QHash<QString, QVariant> &s) const;
+    HTTPRequestHandler *getHTTPRequestHandler(const QHash<QString, QVariant> &s) const;
 };
 
 #endif // LOGINPLUGIN_H

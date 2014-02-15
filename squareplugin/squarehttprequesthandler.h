@@ -6,8 +6,8 @@
 class SquareHTTPRequestHandler : public HTTPRequestHandler
 {
 public:
-    SquareHTTPRequestHandler(const HTTPRequest &r);
-    void createResponse();
+    SquareHTTPRequestHandler();
+    void createResponse(const HTTPRequest &r);
 };
 
 #endif // SQUAREHTTPREQUESTHANDLER_H

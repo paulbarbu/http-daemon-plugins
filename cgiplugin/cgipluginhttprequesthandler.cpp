@@ -4,9 +4,8 @@
 #include "cgipluginhttprequesthandler.h"
 #include "cgiresponseparser.h"
 
-CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const HTTPRequest &requestData,
-                                                         const QHash<QString, QVariant> &s) :
-    HTTPRequestHandler(requestData, s), scriptName(""), timeout(5000)
+CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const QHash<QString, QVariant> &s) :
+    HTTPRequestHandler(s), scriptName(""), timeout(5000)
 {
     int timeout_val;
     bool ok;
@@ -21,7 +20,7 @@ CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const HTTPRequest &requ
     setScriptName();
 }
 
-void CgiPluginHTTPRequestHandler::createResponse()
+void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
     qDebug() << settings;
 

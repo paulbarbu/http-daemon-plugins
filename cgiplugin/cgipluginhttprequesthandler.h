@@ -9,8 +9,8 @@
 class CgiPluginHTTPRequestHandler : public HTTPRequestHandler
 {
 public:
-    explicit CgiPluginHTTPRequestHandler(const HTTPRequest &requestData, const QHash<QString, QVariant> &s);
-    void createResponse();
+    explicit CgiPluginHTTPRequestHandler(const QHash<QString, QVariant> &s);
+    void createResponse(const HTTPRequest &requestData);
 private:
     void setScriptName();
     void setEnvironment();

@@ -5,12 +5,11 @@ SquarePlugin::SquarePlugin(QObject *parent) : QObject(parent)
 {
 }
 
-HTTPRequestHandler *SquarePlugin::getHTTPRequestHandler(const HTTPRequest &requestData,
-                                                        const QHash<QString, QVariant> &s) const
+HTTPRequestHandler *SquarePlugin::getHTTPRequestHandler(const QHash<QString, QVariant> &s) const
 {
     Q_UNUSED(s);
 
-    return new SquareHTTPRequestHandler(requestData);
+    return new SquareHTTPRequestHandler();
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))

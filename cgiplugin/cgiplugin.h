@@ -19,7 +19,7 @@ class CGIPLUGINSHARED_EXPORT CgiPlugin : public QObject, public IPlugin
     #endif
 public:
     CgiPlugin(QObject *parent=0);
-    HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData, const QHash<QString, QVariant> &s) const;
+    HTTPRequestHandler *getHTTPRequestHandler(const QHash<QString, QVariant> &s) const;
 };
 
 #endif // CGIPLUGIN_H

@@ -8,12 +8,11 @@
 
 #include "loginhttprequesthandler.h"
 
-LoginHTTPRequestHandler::LoginHTTPRequestHandler(const HTTPRequest &requestData) :
-    HTTPRequestHandler(requestData)
+LoginHTTPRequestHandler::LoginHTTPRequestHandler() : HTTPRequestHandler()
 {
 }
 
-void LoginHTTPRequestHandler::createResponse()
+void LoginHTTPRequestHandler::createResponse(const HTTPRequest &r)
 {
     HTTPResponse response;
     QString page = "\r\n<html><body>"
@@ -24,11 +23,11 @@ void LoginHTTPRequestHandler::createResponse()
             "<INPUT type=\"submit\" value=\"Auth\">"
             "</form></body></html>";
 
-    if("GET" == requestData.method){
+    if("GET" == r.method){
         response.setStatusCode(200);
         response.setReasonPhrase("OK");
 
-        QList<QNetworkCookie> cookieList = QtConcurrent::blockingFiltered(requestData.cookieJar,
+        QList<QNetworkCookie> cookieList = QtConcurrent::blockingFiltered(r.cookieJar,
             [] (const QNetworkCookie &cookie) -> bool {
                 return cookie.name() == "loggedin" &&  cookie.value() == "1";
             }
@@ -46,11 +45,11 @@ void LoginHTTPRequestHandler::createResponse()
         return;
     }
 
-    if("POST" == requestData.method && !requestData.postData.isEmpty()){
-        if(requestData.postData.contains("username") &&
-                "Ion" == requestData.postData["username"] &&
-                requestData.postData.contains("pass") &&
-                "1234" == requestData.postData["pass"]){
+    if("POST" == r.method && !r.postData.isEmpty()){
+        if(r.postData.contains("username") &&
+                "Ion" == r.postData["username"] &&
+                r.postData.contains("pass") &&
+                "1234" == r.postData["pass"]){
 
             response.setStatusCode(200);
             response.setReasonPhrase("OK");

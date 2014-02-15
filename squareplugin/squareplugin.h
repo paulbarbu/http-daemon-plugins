@@ -22,8 +22,7 @@ class SQUAREPLUGINSHARED_EXPORT SquarePlugin :
     #endif
 public:
     SquarePlugin(QObject *parent=0);
-        HTTPRequestHandler *getHTTPRequestHandler(const HTTPRequest &requestData,
-                                                  const QHash<QString, QVariant> &s) const;
+        HTTPRequestHandler *getHTTPRequestHandler(const QHash<QString, QVariant> &s) const;
 };
 
 #endif // SQUAREPLUGIN_H

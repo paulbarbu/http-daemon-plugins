@@ -5,12 +5,11 @@
 
 #include "squarehttprequesthandler.h"
 
-SquareHTTPRequestHandler::SquareHTTPRequestHandler(const HTTPRequest &r) :
-    HTTPRequestHandler(r)
+SquareHTTPRequestHandler::SquareHTTPRequestHandler() : HTTPRequestHandler()
 {
 }
 
-void SquareHTTPRequestHandler::createResponse()
+void SquareHTTPRequestHandler::createResponse(const HTTPRequest &r)
 {
     HTTPResponse response;
     #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))

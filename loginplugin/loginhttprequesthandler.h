@@ -6,8 +6,8 @@
 class LoginHTTPRequestHandler : public HTTPRequestHandler
 {
 public:
-    LoginHTTPRequestHandler(const HTTPRequest &requestData);
-    void createResponse();
+    LoginHTTPRequestHandler();
+    void createResponse(const HTTPRequest &r);
 };
 
 #endif // LOGINHTTPREQUESTHANDLER_H
