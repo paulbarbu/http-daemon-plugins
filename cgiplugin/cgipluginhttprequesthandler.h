@@ -13,7 +13,7 @@ public:
     void createResponse(const HTTPRequest &requestData);
 private:
     void setScriptName();
-    void setEnvironment();
+    void setEnvironment(const HTTPRequest &requestData);
 
     QString scriptName;
     QStringList urlParts;

@@ -13,12 +13,12 @@ void SquareHTTPRequestHandler::createResponse(const HTTPRequest &r)
 {
     HTTPResponse response;
     #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-        QUrlQuery url_query(requestData.url);
+        QUrlQuery url_query(r.url);
     #else
-        QUrl url_query = requestData.url;
+        QUrl url_query = r.url;
     #endif
 
-    if("GET" != requestData.method || !url_query.hasQueryItem("a")){
+    if("GET" != r.method || !url_query.hasQueryItem("a")){
         response.setStatusCode(400);
         response.setReasonPhrase("Bad Request");
         response.setBody("Try again with valid data!\n");

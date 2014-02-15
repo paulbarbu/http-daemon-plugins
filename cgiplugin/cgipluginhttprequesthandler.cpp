@@ -14,14 +14,13 @@ CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const QHash<QString, QV
     if(ok){
         timeout = timeout_val;
     }
-
-    urlParts = requestData.url.path().split("/", QString::SkipEmptyParts);
-
-    setScriptName();
 }
 
 void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
+    urlParts = requestData.url.path().split("/", QString::SkipEmptyParts);
+
+    setScriptName();
     qDebug() << settings;
 
     QFileInfo info(settings.value("cgi-dir", "").toString());
@@ -46,7 +45,7 @@ void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
         return;
     }
 
-    setEnvironment();
+    setEnvironment(requestData);
 
     QProcess process;
 
@@ -163,7 +162,7 @@ void CgiPluginHTTPRequestHandler::setScriptName()
     }
 }
 
-void CgiPluginHTTPRequestHandler::setEnvironment()
+void CgiPluginHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
 {
     env.insert("REDIRECT_STATUS", "200");
 
@@ -199,7 +198,6 @@ void CgiPluginHTTPRequestHandler::setEnvironment()
             env.insert("QUERY_STRING", requestData.url.query(QUrl::FullyEncoded));
             qDebug() << "QUERY_STRING" << requestData.url.query(QUrl::FullyEncoded);
         #else
-            //TODO: test this
             env.insert("QUERY_STRING", requestData.url.encodedQuery());
             qDebug() << "QUERY_STRING" << requestData.url.encodedQuery();
         #endif
