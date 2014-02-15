@@ -14,17 +14,22 @@ TEMPLATE = lib
 DEFINES += CGIPLUGIN_LIBRARY
 
 SOURCES += cgiplugin.cpp \
-    cgipluginhttprequesthandler.cpp \
-    cgiresponseparser.cpp \
-    cgiresponse.cpp
+	cgipluginhttprequesthandler.cpp \
+	cgiresponseparser.cpp \
+	cgiresponse.cpp
 
 HEADERS += cgiplugin.h\
-		cgiplugin_global.h \
-    cgipluginhttprequesthandler.h \
-    cgiresponseparser.h \
-    cgiresponse.h
+	cgiplugin_global.h \
+	cgipluginhttprequesthandler.h \
+	cgiresponseparser.h \
+	cgiresponse.h
 
 QMAKE_CXXFLAGS += -std=c++11
+
+CONFIG(release, debug|release){
+	DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_WARNING_OUTPUT
+	message("Release mode: No debug or warning messages from Qt")
+}
 
 unix {
 	target.path = /usr/lib

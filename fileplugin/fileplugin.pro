@@ -21,6 +21,13 @@ HEADERS += fileplugin.h\
 	fileplugin_global.h \
 	filehttprequesthandler.h
 
+QMAKE_CXXFLAGS += -std=c++11
+
+CONFIG(release, debug|release){
+	DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_WARNING_OUTPUT
+	message("Release mode: No debug or warning messages from Qt")
+}
+
 unix {
 	target.path = /usr/lib
 	INSTALLS += target

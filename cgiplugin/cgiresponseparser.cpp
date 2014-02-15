@@ -74,7 +74,7 @@ bool CgiResponseParser::parseHeaders(const QByteArray &headers)
             }
         }
         else if("Location" == key){
-            //TODO: implement
+            //TODO: implement redirects
             response.setCgiField(key, value);
         }
         else{

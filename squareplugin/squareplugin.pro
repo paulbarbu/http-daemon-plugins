@@ -21,12 +21,13 @@ HEADERS += squareplugin.h\
 
 QMAKE_CXXFLAGS += -std=c++11
 
-unix:!symbian {
-	maemo5 {
-		target.path = /opt/usr/lib
-	} else {
-		target.path = /usr/lib
-	}
+CONFIG(release, debug|release){
+	DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_WARNING_OUTPUT
+	message("Release mode: No debug or warning messages from Qt")
+}
+
+unix {
+	target.path = /usr/lib
 	INSTALLS += target
 }
 
