@@ -13,6 +13,7 @@ protected:
     void serveFileContents(const QString &path);
 
 private:
+    unsigned int chunk_size;
     HTTPResponse response;
 };
 

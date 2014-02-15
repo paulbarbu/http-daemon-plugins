@@ -4,9 +4,17 @@
 
 #include "filehttprequesthandler.h"
 
-FileHTTPRequestHandler::FileHTTPRequestHandler(const QHash<QString, QVariant> &s) : HTTPRequestHandler(s)
+FileHTTPRequestHandler::FileHTTPRequestHandler(const QHash<QString, QVariant> &s) :
+    HTTPRequestHandler(s), chunk_size(512*1024)
 {
     //TODO: set the mime type - libmagic
+    unsigned int chunk_size_val;
+    bool ok;
+    chunk_size_val = settings["chunksize"].toUInt(&ok);
+
+    if(ok){
+        chunk_size = chunk_size_val*1024;
+    }
 }
 
 void FileHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
@@ -81,13 +89,13 @@ void FileHTTPRequestHandler::serveFileContents(const QString &path)
     response.setReasonPhrase("OK");
 
     QByteArray content;
-    content = file.read(1024);
+    content = file.read(chunk_size);
 
     while(!content.isEmpty()){
         response.appendBody(content);
         emit responseWritten(response);
 
-        content = file.read(1024);
+        content = file.read(chunk_size);
     }
 
     emit endOfWriting();
