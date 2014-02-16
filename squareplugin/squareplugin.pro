@@ -24,6 +24,7 @@ QMAKE_CXXFLAGS += -std=c++11
 CONFIG(release, debug|release){
 	DEFINES += QT_NO_DEBUG_OUTPUT QT_NO_WARNING_OUTPUT
 	message("Release mode: No debug or warning messages from Qt")
+	QMAKE_CXXFLAGS += -O3
 }
 
 unix {
