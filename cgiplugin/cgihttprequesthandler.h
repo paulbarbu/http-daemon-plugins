@@ -6,10 +6,10 @@
 #include "httprequesthandler.h"
 #include "cgiresponse.h"
 
-class CgiPluginHTTPRequestHandler : public HTTPRequestHandler
+class CgiHTTPRequestHandler : public HTTPRequestHandler
 {
 public:
-    explicit CgiPluginHTTPRequestHandler(const QHash<QString, QVariant> &s);
+    explicit CgiHTTPRequestHandler(const QHash<QString, QVariant> &s);
     void createResponse(const HTTPRequest &requestData);
 private:
     void clear();

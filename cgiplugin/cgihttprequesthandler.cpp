@@ -1,10 +1,10 @@
 #include <QProcess>
 #include <QFileInfo>
 
-#include "cgipluginhttprequesthandler.h"
+#include "cgihttprequesthandler.h"
 #include "cgiresponseparser.h"
 
-CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const QHash<QString, QVariant> &s) :
+CgiHTTPRequestHandler::CgiHTTPRequestHandler(const QHash<QString, QVariant> &s) :
     HTTPRequestHandler(s), scriptName(""), timeout(5000)
 {
     int timeout_val;
@@ -16,7 +16,7 @@ CgiPluginHTTPRequestHandler::CgiPluginHTTPRequestHandler(const QHash<QString, QV
     }
 }
 
-void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
+void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
     clear();
     urlParts = requestData.url.path().split("/", QString::SkipEmptyParts);
@@ -156,7 +156,7 @@ void CgiPluginHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
     emit endOfWriting();
 }
 
-void CgiPluginHTTPRequestHandler::clear()
+void CgiHTTPRequestHandler::clear()
 {
     response.clear();
     scriptName.clear();
@@ -164,7 +164,7 @@ void CgiPluginHTTPRequestHandler::clear()
     env.clear();
 }
 
-void CgiPluginHTTPRequestHandler::setScriptName()
+void CgiHTTPRequestHandler::setScriptName()
 {
     qDebug() << urlParts.size();
     if(2 <= urlParts.size()){
@@ -172,7 +172,7 @@ void CgiPluginHTTPRequestHandler::setScriptName()
     }
 }
 
-void CgiPluginHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
+void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
 {
     env.insert("REDIRECT_STATUS", "200");
 

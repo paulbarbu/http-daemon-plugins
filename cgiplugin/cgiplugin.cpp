@@ -1,5 +1,5 @@
 #include "cgiplugin.h"
-#include "cgipluginhttprequesthandler.h"
+#include "cgihttprequesthandler.h"
 
 CgiPlugin::CgiPlugin(QObject *parent) : QObject(parent)
 {
@@ -7,7 +7,7 @@ CgiPlugin::CgiPlugin(QObject *parent) : QObject(parent)
 
 HTTPRequestHandler *CgiPlugin::getHTTPRequestHandler(const QHash<QString, QVariant> &s) const
 {
-    return new CgiPluginHTTPRequestHandler(s);
+    return new CgiHTTPRequestHandler(s);
 }
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
