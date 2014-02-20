@@ -2,7 +2,10 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QFile>
-#include <QMimeDatabase>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    #include <QMimeDatabase>
+#endif
+#include <QDebug>
 
 #include "filehttprequesthandler.h"
 
