@@ -13,3 +13,7 @@ HTTPRequestHandler *FilePlugin::getHTTPRequestHandler(const QHash<QString, QVari
 {
     return new FileHTTPRequestHandler(s);
 }
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    Q_EXPORT_PLUGIN2(fileplugin, FilePlugin)
+#endif
