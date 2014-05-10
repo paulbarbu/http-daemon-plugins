@@ -13,10 +13,9 @@ public:
     void createResponse(const HTTPRequest &requestData);
 private:
     void clear();
-    void setScriptName();
     void setEnvironment(const HTTPRequest &requestData);
 
-    QString scriptName;
+    QString pathInfo;
     QStringList urlParts;
     CgiResponse response;
     int timeout;

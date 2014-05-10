@@ -6,7 +6,7 @@
 #include "cgiresponseparser.h"
 
 CgiHTTPRequestHandler::CgiHTTPRequestHandler(const QHash<QString, QVariant> &s) :
-    HTTPRequestHandler(s), scriptName(""), timeout(5000)
+    HTTPRequestHandler(s), pathInfo(""), timeout(5000)
 {
     int timeout_val;
     bool ok;
@@ -19,10 +19,42 @@ CgiHTTPRequestHandler::CgiHTTPRequestHandler(const QHash<QString, QVariant> &s) 
 
 void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
-    clear();
-    urlParts = requestData.url.path().split("/", QString::SkipEmptyParts);
+    //TODO: on some setups the plugins blocks on process.waitForFinished
+    //TODO: correctly parse CGI output
 
-    setScriptName();
+    // http://127.0.0.1:8282/cgi/info.php/asd
+    // => SCRIPT_FILENAME cgi-bin-dir + /info.php/
+    // => SCRIPT_NAME /cgi/info.php
+    // => PATH_INFO /asd
+
+    // http://127.0.0.1:8282/cgi/wp/index.php/asd
+    // => SCRIPT_FILENAME cgi-bin-dir + /wp/index.php/
+    // => SCRIPT_NAME /cgi/wp/index.php
+    // => PATH_INFO /asd
+
+    if(requestData.url.isEmpty()){
+        response.setStatusCode(404);
+        response.setReasonPhrase("Not Found");
+
+        emit responseWritten(response);
+        emit endOfWriting();
+        return;
+    }
+
+    clear();
+    int slashPos = requestData.url.path().indexOf('/', 1);
+    urlParts << requestData.url.path().left(slashPos);
+    urlParts << requestData.url.path().right(requestData.url.path().size() - slashPos);
+
+    if(urlParts[1].endsWith('/'))
+    {
+        urlParts[1].truncate(urlParts[1].size()-1);
+    }
+
+    foreach(QString part, urlParts){
+        qDebug()<<requestData.url.path() << "part:" << part;
+    }
+
     qDebug() << settings;
 
     QFileInfo info(settings.value("cgi-dir", "").toString());
@@ -38,7 +70,9 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
         return;
     }
 
-    if(scriptName.isEmpty()){
+    int extPos = urlParts[1].indexOf(".");
+
+    if(-1 == extPos){
         response.setStatusCode(404);
         response.setReasonPhrase("Not Found");
 
@@ -47,25 +81,9 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
         return;
     }
 
-    setEnvironment(requestData);
+    slashPos = urlParts[1].indexOf('/', extPos);
 
-    QProcess process;
-
-    process.setProcessEnvironment(env);
-    process.setWorkingDirectory(settings["cgi-dir"].toString());
-
-    int pos = urlParts[1].indexOf(".");
-
-    if(-1 == pos){
-        response.setStatusCode(404);
-        response.setReasonPhrase("Not Found");
-
-        emit responseWritten(response);
-        emit endOfWriting();
-        return;
-    }
-
-    QString extension(urlParts[1].right(urlParts[1].size() - pos -1));
+    QString extension(urlParts[1].mid(extPos+1, slashPos-extPos-1));
 
     qDebug() << "Extension:" << extension;
     if(!settings.contains(extension)){
@@ -76,6 +94,15 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
         emit endOfWriting();
         return;
     }
+
+    pathInfo = urlParts[1].right(urlParts[1].size() - slashPos);
+
+    setEnvironment(requestData);
+
+    QProcess process;
+
+    process.setProcessEnvironment(env);
+    process.setWorkingDirectory(settings["cgi-dir"].toString());
 
     QString path = settings[extension].toString();
 
@@ -159,18 +186,10 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 
 void CgiHTTPRequestHandler::clear()
 {
+    pathInfo.clear();
     response.clear();
-    scriptName.clear();
     urlParts.clear();
     env.clear();
-}
-
-void CgiHTTPRequestHandler::setScriptName()
-{
-    qDebug() << urlParts.size();
-    if(2 <= urlParts.size()){
-        scriptName = "/" + urlParts[0] + "/" + urlParts[1];
-    }
 }
 
 void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
@@ -181,11 +200,11 @@ void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
     env.insert("SCRIPT_FILENAME", settings["cgi-dir"].toString() + urlParts[1]);
     qDebug() << "SCRIPT_FILENAME" << settings["cgi-dir"].toString() + urlParts[1];
 
-    env.insert("SCRIPT_NAME", scriptName);
-    qDebug() << "SCRIPT_NAME" << scriptName;
+    env.insert("SCRIPT_NAME", requestData.url.path());
+    qDebug() << "SCRIPT_NAME" << requestData.url.path();
 
-    env.insert("PATH_INFO", requestData.url.path().replace(0, scriptName.length(), ""));
-    qDebug() << "PATH_INFO" << requestData.url.path().replace(0, scriptName.length(), "");
+    env.insert("PATH_INFO", pathInfo);
+    qDebug() << "PATH_INFO" << pathInfo;
 
     env.insert("REQUEST_METHOD", requestData.method);
     qDebug() << "REQUEST_METHOD" << requestData.method;
