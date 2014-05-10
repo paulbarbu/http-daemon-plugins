@@ -4,7 +4,6 @@
 #include <QProcessEnvironment>
 
 #include "httprequesthandler.h"
-#include "cgiresponse.h"
 
 class CgiHTTPRequestHandler : public HTTPRequestHandler
 {
@@ -17,7 +16,7 @@ private:
 
     QString pathInfo;
     QStringList urlParts;
-    CgiResponse response;
+    HTTPResponse response;
     int timeout;
     QProcessEnvironment env;
 };

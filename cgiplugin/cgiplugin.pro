@@ -15,13 +15,11 @@ DEFINES += CGIPLUGIN_LIBRARY
 
 SOURCES += cgiplugin.cpp \
 	cgiresponseparser.cpp \
-	cgiresponse.cpp \
 	cgihttprequesthandler.cpp
 
 HEADERS += cgiplugin.h\
 	cgiplugin_global.h \
 	cgiresponseparser.h \
-	cgiresponse.h \
 	cgihttprequesthandler.h
 
 QMAKE_CXXFLAGS += -std=c++11

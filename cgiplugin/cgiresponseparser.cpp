@@ -22,13 +22,35 @@ bool CgiResponseParser::parse()
         }
     }
 
+
     response.setStatusCode(200);
     response.setReasonPhrase("OK");
 
     QByteArray headers = rawResponse.left(pos);
     if(!parseHeaders(headers)){
-        qDebug() << "Cannot parse the header";
-        return false;
+        if("\n\n" == headBodySep){
+            headBodySep = "\r\n\r\n";
+        }
+        else{
+            headBodySep = "\n\n";
+        }
+
+        pos = rawResponse.indexOf(headBodySep);
+
+        if(-1 == pos){
+            qDebug() << "No separator between header and body";
+            return false;
+        }
+
+        response.clear();
+
+        response.setStatusCode(200);
+        response.setReasonPhrase("OK");
+        headers = rawResponse.left(pos);
+        if(!parseHeaders(headers)){
+            qDebug() << "Cannot parse the header";
+            return false;
+        }
     }
 
     response.setBody(rawResponse.right(rawResponse.size() - pos - headBodySep.size()));
@@ -36,7 +58,7 @@ bool CgiResponseParser::parse()
     return true;
 }
 
-CgiResponse CgiResponseParser::getResponse() const
+HTTPResponse CgiResponseParser::getResponse() const
 {
     return response;
 }
@@ -72,10 +94,6 @@ bool CgiResponseParser::parseHeaders(const QByteArray &headers)
                 qDebug() << "Failed to parse CGI status line";
                 return false;
             }
-        }
-        else if("Location" == key){
-            //TODO: implement redirects
-            response.setCgiField(key, value);
         }
         else{
             response.setHeaderField(key, value);

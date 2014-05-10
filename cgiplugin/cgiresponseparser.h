@@ -2,21 +2,20 @@
 #define CGIRESPONSEPARSER_H
 
 #include <QByteArray>
-
-#include "cgiresponse.h"
+#include "httpresponse.h"
 
 class CgiResponseParser
 {
 public:
-    CgiResponseParser(const QByteArray &r) : rawResponse(r) {};
+    CgiResponseParser(const QByteArray &r) : rawResponse(r) {}
     bool parse();
-    CgiResponse getResponse() const;
+    HTTPResponse getResponse() const;
 private:
     bool parseHeaders(const QByteArray &headers);
     bool parseStatus(const QString &statusLine);
 
     QByteArray rawResponse;
-    CgiResponse response;
+    HTTPResponse response;
 };
 
 #endif // CGIRESPONSEPARSER_H

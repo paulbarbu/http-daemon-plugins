@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFileInfo>
+#include <QDir>
 
 #include "cgihttprequesthandler.h"
 #include "cgiresponseparser.h"
@@ -20,7 +21,6 @@ CgiHTTPRequestHandler::CgiHTTPRequestHandler(const QHash<QString, QVariant> &s) 
 void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 {
     //TODO: on some setups the plugins blocks on process.waitForFinished
-    //TODO: correctly parse CGI output
 
     // http://127.0.0.1:8282/cgi/info.php/asd
     // => SCRIPT_FILENAME cgi-bin-dir + /info.php/
@@ -57,7 +57,7 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
 
     qDebug() << settings;
 
-    QFileInfo info(settings.value("cgi-dir", "").toString());
+    QFileInfo info(settings["docroot"].toString() + settings["cgi-dir"].toString());
 
     if(!info.isReadable() || !info.isDir()){
         response.setStatusCode(500);
@@ -71,27 +71,64 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
     }
 
     int extPos = urlParts[1].indexOf(".");
-
-    if(-1 == extPos){
-        response.setStatusCode(404);
-        response.setReasonPhrase("Not Found");
-
-        emit responseWritten(response);
-        emit endOfWriting();
-        return;
-    }
-
     slashPos = urlParts[1].indexOf('/', extPos);
 
-    QString extension(urlParts[1].mid(extPos+1, slashPos-extPos-1));
+    QString extension;
 
-    qDebug() << "Extension:" << extension;
-    if(!settings.contains(extension)){
-        response.setStatusCode(404);
-        response.setReasonPhrase("Not Found");
+    if(-1 == extPos){
+        qDebug() << "urlpatrs" <<urlParts[1];
+        bool found = false;
+        //TODO: this should be modified to check more directory levels, not just two
+        QDir cgiDir(info.filePath() + urlParts[1]);
+        QStringList files = cgiDir.entryList(QDir::Files); //TODO: cgi/wp
 
-        emit responseWritten(response);
-        emit endOfWriting();
+        //TODO: this is ugly, but (for now) I have no way of knowing which one is an extension
+        foreach(QString key, settings.keys()){
+            if(files.contains(settings["index-filename"].toString() + "." + key)){
+                found = true;
+                extension = key;
+                urlParts[1] += "/" + settings["index-filename"].toString() + "." + key;
+                break;
+            }
+        }
+
+        if(!found){
+            response.setStatusCode(404);
+            response.setReasonPhrase("Not Found");
+
+            emit responseWritten(response);
+            emit endOfWriting();
+            return;
+        }
+    }
+    else{
+        extension = urlParts[1].mid(extPos+1, slashPos-extPos-1);
+        qDebug() << "Extension:" << extension;
+        if(!settings.contains(extension)){
+            response.setStatusCode(404);
+            response.setReasonPhrase("Not Found");
+
+            emit responseWritten(response);
+            emit endOfWriting();
+            return;
+        }
+    }
+
+    QString path = settings[extension].toString();
+
+    if("*" == path){
+        //TODO: this is ruined now
+        path = settings["docroot"].toString() + settings["cgi-dir"].toString() + urlParts[1];
+    }
+    else if("static_file" == path){
+        qDebug() << "STATIC_FILE IN CGI:" << extension;
+
+        HTTPRequest r = requestData;
+        QString newPath = r.url.path();
+        newPath.replace(settings.value("virtual-cgi-dir", "").toString(), "/" + settings.value("cgi-dir", "").toString());
+
+        r.url.setPath(newPath);
+        emit redirect(r);
         return;
     }
 
@@ -102,13 +139,7 @@ void CgiHTTPRequestHandler::createResponse(const HTTPRequest &requestData)
     QProcess process;
 
     process.setProcessEnvironment(env);
-    process.setWorkingDirectory(settings["cgi-dir"].toString());
-
-    QString path = settings[extension].toString();
-
-    if("*" == path){
-        path = settings["cgi-dir"].toString() + urlParts[1];
-    }
+    process.setWorkingDirectory(settings["docroot"].toString() + settings["cgi-dir"].toString());
 
     qDebug() << "Starting process:" << path;
     process.start(path);
@@ -197,14 +228,14 @@ void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
     env.insert("REDIRECT_STATUS", "200");
 
     //absolute path to the script
-    env.insert("SCRIPT_FILENAME", settings["cgi-dir"].toString() + urlParts[1]);
-    qDebug() << "SCRIPT_FILENAME" << settings["cgi-dir"].toString() + urlParts[1];
+    env.insert("SCRIPT_FILENAME", settings["docroot"].toString() + settings["cgi-dir"].toString() + urlParts[1]);
+    qDebug() << "SCRIPT_FILENAME" << settings["docroot"].toString() + settings["cgi-dir"].toString() + urlParts[1];
 
     env.insert("SCRIPT_NAME", requestData.url.path());
     qDebug() << "SCRIPT_NAME" << requestData.url.path();
 
-    env.insert("PATH_INFO", pathInfo);
-    qDebug() << "PATH_INFO" << pathInfo;
+    env.insert("PATH_INFO", "");//pathInfo);
+    qDebug() << "PATH_INFO" << "";//pathInfo;
 
     env.insert("REQUEST_METHOD", requestData.method);
     qDebug() << "REQUEST_METHOD" << requestData.method;
@@ -217,6 +248,9 @@ void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
 
     env.insert("SERVER_NAME", requestData.host.toString());
     qDebug() << "SERVER_NAME" << requestData.host.toString();
+
+    env.insert("HTTP_HOST", requestData.host.toString() + ":" + QString::number(requestData.port));
+    qDebug() << "HTTP_HOST" << requestData.host.toString() + ":" + QString::number(requestData.port);
 
     env.insert("SERVER_PROTOCOL", requestData.protocol + "/" + QString::number(requestData.protocolVersion));
     qDebug() << "SERVER_PROTOCOL:" << QString(requestData.protocol + "/" + QString::number(requestData.protocolVersion));
@@ -247,4 +281,12 @@ void CgiHTTPRequestHandler::setEnvironment(const HTTPRequest &requestData)
         env.insert("CONTENT_TYPE", requestData.contentType);
         qDebug() << "CONTENT_TYPE" << requestData.contentType;
     }
+
+    QString cookies;
+    foreach(QNetworkCookie c, requestData.cookieJar){
+        cookies += c.toRawForm(QNetworkCookie::NameAndValueOnly) + ";";
+    }
+
+    env.insert("HTTP_COOKIE", cookies);
+    qDebug() << "HTTP_COOKIE" << cookies;
 }
