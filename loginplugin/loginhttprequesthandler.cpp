@@ -54,7 +54,7 @@ void LoginHTTPRequestHandler::createResponse(const HTTPRequest &r)
             response.setStatusCode(200);
             response.setReasonPhrase("OK");
 
-            //this could be something randomized in order to avoid replicating
+            //TODO: this could be something randomized in order to avoid replicating
             QNetworkCookie cookie("loggedin", "1");
             cookie.setHttpOnly(true);
             response.setCookie(cookie);
